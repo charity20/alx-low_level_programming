@@ -6,26 +6,28 @@
   */
 size_t free_listint_safe(listint_t **h)
 {
-	listint_t *current;
-	listnode_t *nodes = NULL;
-	size_t count = 0;
+	listint_t *temp;
+	int dif;
+	size_t len = 0;
 
-	if (h == NULL)
+	if (!h || !*h)
 		return (0);
-	while (!is_in_nodes(nodes, *h))
+	while (*h)
 	{
-		if (!add_nodeptr(&nodes, *h))
+		dif = *h - (*h)->next;
+		if (dif > 0)
 		{
-			free_listnode(nodes);
-			exit(98);
+			temp = (*h)->next;
+			*h = temp;
+			len++;
 		}
-		current = *h;
-		*h = (*h)->next;
-		free(current);
-		count++;
+		else
+		{
+			*h = NULL;
+			len++;
+			break;
+		}
 	}
-	if (*h != NULL)
-		*h = NULL;
-	free_listnode(nodes);
-	return (count);
+	*h = NULL;
+	return (len);
 }
